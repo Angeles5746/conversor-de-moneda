@@ -1,0 +1,56 @@
+import tkinter as tk
+from tkinter import ttk, messagebox
+
+# Tasas de cambio fijas (puedes actualizarlas o conectarte a una API)
+exchange_rates = {
+    "USD": {"EUR": 0.92, "NIO": 36.50, "JPY": 157.30},
+    "EUR": {"USD": 1.09, "NIO": 39.50, "JPY": 170.50},
+    "NIO": {"USD": 0.027, "EUR": 0.025, "JPY": 4.30},
+    "JPY": {"USD": 0.0064, "EUR": 0.0059, "NIO": 0.23}
+}
+
+currencies = list(exchange_rates.keys())
+
+def convert_currency():
+    try:
+        amount = float(entry_amount.get())
+        from_curr = combo_from.get()
+        to_curr = combo_to.get()
+
+        if from_curr == to_curr:
+            result = amount
+        else:
+            rate = exchange_rates[from_curr][to_curr]
+            result = amount * rate
+
+        label_result.config(text=f"{amount:.2f} {from_curr} = {result:.2f} {to_curr}")
+    except ValueError:
+        messagebox.showerror("Error", "Por favor, ingresa un número válido.")
+    except KeyError:
+        messagebox.showerror("Error", "Conversión no disponible para esta combinación.")
+
+# Crear ventana principal
+root = tk.Tk()
+root.title("Conversor de Monedas")
+root.geometry("350x250")
+root.resizable(False, False)
+
+# Widgets
+tk.Label(root, text="Cantidad:").pack(pady=5)
+entry_amount = tk.Entry(root, width=20)
+entry_amount.pack()
+
+tk.Label(root, text="De:").pack(pady=5)
+combo_from = ttk.Combobox(root, values=currencies, state="readonly")
+combo_from.pack()
+
+tk.Label(root, text="A:").pack(pady=5)
+combo_to = ttk.Combobox(root, values=currencies, state="readonly")
+combo_to.pack()
+
+tk.Button(root, text="Convertir", command=convert_currency).pack(pady=10)
+label_result = tk.Label(root, text="", font=("Arial", 12, "bold"))
+label_result.pack(pady=10)
+
+# Ejecutar la app
+root.mainloop()
